@@ -1,0 +1,42 @@
+name: "org-formation-cicd-pipeline-ghas"
+
+env:
+  ROLE_TO_ASSUME: <ARN of the GitHub Actions role to assume>
+  AWS_REGION: <Your region>
+
+on:
+  push:
+    branches:
+      - main     
+    paths:
+      - <Path whose changes will trigger the GHAs>
+
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  org-formation-push:
+    name: "org-formation-cicd-pipeline-ghas"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'  
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Organization Formation
+        run: | 
+          npm install -g aws-organization-formation
+          org-formation -v
+
+      - name: Update Organization
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: org-formation update <Path to organization.yml>

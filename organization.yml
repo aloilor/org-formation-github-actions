@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: '2010-09-09-OC'
+Description: default template generated for organization with master account <your_account_id>
+
+Organization:
+  ManagementAccount:
+    Type: OC::ORG::MasterAccount
+    Properties:
+      AccountName: <your_account_name>
+      AccountId: '<your_account_id'
+      RootEmail: <your_email@gmail.com>
+
+  OrganizationRoot:
+    Type: OC::ORG::OrganizationRoot
+    Properties:
+      DefaultOrganizationAccessRoleName: OrganizationAccountAccessRole
+  
+
+  ##### OrganizationalUnits #####
+  
+  ProductionOU:
+    Type: OC::ORG::OrganizationalUnit
+    Properties:
+      OrganizationalUnitName: production
+      Accounts: 
+        - !Ref ProdAccount1
+
+
+  TestOU:
+    Type: OC::ORG::OrganizationalUnit
+    Properties:
+      OrganizationalUnitName: test
+      Accounts:
+        - !Ref TestAccount1
+
+
+  DevelopmentOU:
+    Type: OC::ORG::OrganizationalUnit
+    Properties:
+      OrganizationalUnitName: development
+      Accounts:
+        - !Ref DevelopmentAccount1
+
+
+  ##### Accounts #####
+
+  DevelopmentAccount1:
+    Type: OC::ORG::Account
+    Properties:
+      AccountName: devAccount1
+      RootEmail: <your_email+devAccount1@gmail.com>   # use the + suffix trick to handle all the accounts using just a single email account
+      Alias: dev
+      PasswordPolicy: !Ref PasswordPolicy
+  
+  TestAccount1:
+    Type: OC::ORG::Account
+    Properties:
+      AccountName: testAccount1
+      RootEmail: <your_email+testAccount1@gmail.com>
+      Alias: test
+      PasswordPolicy: !Ref PasswordPolicy
+
+  ProdAccount1:
+    Type: OC::ORG::Account
+    Properties:
+      AccountName: prodAccount1
+      RootEmail: <your_email+prodAccount1@gmail.com>
+      Alias: prod
+      PasswordPolicy: !Ref PasswordPolicy
+
+
+
+  ##### Policies #####
+
+  PasswordPolicy:
+    Type: OC::ORG::PasswordPolicy
+    Properties:
+      MinimumPasswordLength: 12
+      RequireLowercaseCharacters: true
+      RequireNumbers: true
+      RequireSymbols: true
+      RequireUppercaseCharacters: true
+      AllowUsersToChangePassword: true
+
+
+
+
+
+
+
+
+
+
